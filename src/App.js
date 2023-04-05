@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { React, useState } from 'react'
+import './App.css'
+import TodoForm from './component/TodoForm'
+import Todo from './component/Todo';
 
-function App() {
+const App = () => {
+
+  let [todos, setTodos] = useState([])
+  const addTodo = (todo) => { setTodos([todo, ...todos]) }  //todo  >> addtodo >> onSubmit from FORM >> INPUT
+
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            complete: !todo.complete
+          }
+        } else { return todo; }
+      })
+    )
+  }
+
+  const handleDelete = (id) => { setTodos(todos.filter((todo) => todo.id !== id)) }
+  const removeAllCompleteTodos =(id) => {setTodos(todos.filter((todo => !todo.complete )))}
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App' >
+      <TodoForm onSubmit={addTodo} />
+
+      {
+        todos.map((todo) => (
+          <Todo key={todo.id}
+            todo={todo}
+            onDelete={() => handleDelete(todo.id)}
+            toggleComplete={() => toggleComplete(todo.id)} />
+        ))
+      }
+
+      <button onClick={removeAllCompleteTodos}>Remove all complete task</button>
     </div>
-  );
-}
+  )
+};
 
 export default App;
